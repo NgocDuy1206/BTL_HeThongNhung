@@ -59,111 +59,179 @@ C:/Users/FPT/AppData/Local/Arm/Packs/Keil/STM32F1xx_DFP/2.4.1/Device/Include\stm
 C:/Users/FPT/AppData/Local/Arm/Packs/Keil/STM32F1xx_DFP/2.4.1/Device/Include\stm32f10x.h(26): warning: invalid UTF-8 in comment [-Winvalid-utf8]
    26 |   *           - Macros to access peripheral<92>s registers hardware
       |                                            ^
-D:/embeded/stm32f103c8t6/main_nhung.c(108): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  108 | #define MPU6050_ADDRESS 0xD0  // <D0>?a ch? I2C c?a MPU6050
+D:/embeded/stm32f103c8t6/main_nhung.c(110): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  110 | #define MPU6050_ADDRESS 0xD0  // <D0>?a ch? I2C c?a MPU6050
       |                                  ^
-D:/embeded/stm32f103c8t6/main_nhung.c(133): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
-  133 | void Led_Init();
+D:/embeded/stm32f103c8t6/main_nhung.c(130): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  130 | #define FALL_TIME_THRESHOLD 200 // Ngu?ng th?i gian cho c<FA> ng<E3> (ms)
+      |                                                          ^
+D:/embeded/stm32f103c8t6/main_nhung.c(130): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  130 | #define FALL_TIME_THRESHOLD 200 // Ngu?ng th?i gian cho c<FA> ng<E3> (ms)
+      |                                                                 ^
+D:/embeded/stm32f103c8t6/main_nhung.c(133): warning: implicit conversion loses floating-point precision: 'double' to 'float' [-Wimplicit-float-conversion]
+  133 | volatile float Threshold = (1.58*9.81); 
+      |                ~~~~~~~~~    ~~~~^~~~~
+D:/embeded/stm32f103c8t6/main_nhung.c(133): warning: no previous extern declaration for non-static variable 'Threshold' [-Wmissing-variable-declarations]
+  133 | volatile float Threshold = (1.58*9.81); 
+      |                ^
+D:/embeded/stm32f103c8t6/main_nhung.c(133): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+  133 | volatile float Threshold = (1.58*9.81); 
+      |          ^
+D:/embeded/stm32f103c8t6/main_nhung.c(136): warning: no previous extern declaration for non-static variable 'system' [-Wmissing-variable-declarations]
+  136 | enum status system = on;
+      |             ^
+D:/embeded/stm32f103c8t6/main_nhung.c(136): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+  136 | enum status system = on;
+      | ^
+D:/embeded/stm32f103c8t6/main_nhung.c(139): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+  139 | void Led_Init();
       |              ^
       |               void
-D:/embeded/stm32f103c8t6/main_nhung.c(138): warning: no previous prototype for function 'delay' [-Wmissing-prototypes]
-  138 | void delay(int time)
-      |      ^
-D:/embeded/stm32f103c8t6/main_nhung.c(138): note: declare 'static' if the function is not intended to be used outside of this translation unit
-  138 | void delay(int time)
-      | ^
-      | static 
-D:/embeded/stm32f103c8t6/main_nhung.c(161): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  161 |         // X? l<FD> d? li?u gia t?c
-      |                ^
-D:/embeded/stm32f103c8t6/main_nhung.c(144): warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
-  144 |     int16_t accelData[3];
-      |             ^
-D:/embeded/stm32f103c8t6/main_nhung.c(151): warning: variable 'x' set but not used [-Wunused-but-set-variable]
-  151 |                 int x, y, z;
-      |                     ^
-D:/embeded/stm32f103c8t6/main_nhung.c(151): warning: variable 'y' set but not used [-Wunused-but-set-variable]
-  151 |                 int x, y, z;
-      |                        ^
-D:/embeded/stm32f103c8t6/main_nhung.c(151): warning: variable 'z' set but not used [-Wunused-but-set-variable]
-  151 |                 int x, y, z;
-      |                           ^
-D:/embeded/stm32f103c8t6/main_nhung.c(168): warning: implicit conversion changes signedness: 'int' to 'uint32_t' (aka 'unsigned int') [-Wsign-conversion]
-  168 |                 GPIOC->ODR &= ~(1 << 13);
+D:/embeded/stm32f103c8t6/main_nhung.c(170): warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
+  170 |                                 float g = Calculate_Magnitude(x, y, z);
+      |                                       ^
+D:/embeded/stm32f103c8t6/main_nhung.c(170): warning: unused variable 'g' [-Wunused-variable]
+  170 |                                 float g = Calculate_Magnitude(x, y, z);
+      |                                       ^
+D:/embeded/stm32f103c8t6/main_nhung.c(167): warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
+  167 |                 int16_t x, y, z;
+      |                         ^
+D:/embeded/stm32f103c8t6/main_nhung.c(177): warning: implicit conversion changes signedness: 'int' to 'uint32_t' (aka 'unsigned int') [-Wsign-conversion]
+  177 |                 GPIOC->ODR &= ~(1 << 13);
       |                            ~~ ^~~~~~~~~~
-D:/embeded/stm32f103c8t6/main_nhung.c(164): warning: no previous prototype for function 'Led_Init' [-Wmissing-prototypes]
-  164 | void Led_Init(void)
+D:/embeded/stm32f103c8t6/main_nhung.c(173): warning: no previous prototype for function 'Led_Init' [-Wmissing-prototypes]
+  173 | void Led_Init(void)
       |      ^
-D:/embeded/stm32f103c8t6/main_nhung.c(133): note: this declaration is not a prototype; add 'void' to make it a prototype for a zero-parameter function
-  133 | void Led_Init();
+D:/embeded/stm32f103c8t6/main_nhung.c(139): note: this declaration is not a prototype; add 'void' to make it a prototype for a zero-parameter function
+  139 | void Led_Init();
       |      ^        
       |               void
-D:/embeded/stm32f103c8t6/main_nhung.c(171): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  171 |     // Kh?i t?o c<E1>c ch<E2>n I2C v<E0> thi?t l?p t?c d? I2C
+D:/embeded/stm32f103c8t6/main_nhung.c(180): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  180 |     // Kh?i t?o c<E1>c ch<E2>n I2C v<E0> thi?t l?p t?c d? I2C
       |                  ^
-D:/embeded/stm32f103c8t6/main_nhung.c(171): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  171 |     // Kh?i t?o c<E1>c ch<E2>n I2C v<E0> thi?t l?p t?c d? I2C
+D:/embeded/stm32f103c8t6/main_nhung.c(180): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  180 |     // Kh?i t?o c<E1>c ch<E2>n I2C v<E0> thi?t l?p t?c d? I2C
       |                          ^
-D:/embeded/stm32f103c8t6/main_nhung.c(171): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  171 |     // Kh?i t?o c<E1>c ch<E2>n I2C v<E0> thi?t l?p t?c d? I2C
+D:/embeded/stm32f103c8t6/main_nhung.c(180): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  180 |     // Kh?i t?o c<E1>c ch<E2>n I2C v<E0> thi?t l?p t?c d? I2C
       |                                     ^
-D:/embeded/stm32f103c8t6/main_nhung.c(175): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  175 |     // C?u h<EC>nh PB6 v<E0> PB7 l<E0> ch<E2>n I2C1 SCL v<E0> SDA
+D:/embeded/stm32f103c8t6/main_nhung.c(184): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  184 |     // C?u h<EC>nh PB6 v<E0> PB7 l<E0> ch<E2>n I2C1 SCL v<E0> SDA
       |             ^
-D:/embeded/stm32f103c8t6/main_nhung.c(175): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  175 |     // C?u h<EC>nh PB6 v<E0> PB7 l<E0> ch<E2>n I2C1 SCL v<E0> SDA
+D:/embeded/stm32f103c8t6/main_nhung.c(184): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  184 |     // C?u h<EC>nh PB6 v<E0> PB7 l<E0> ch<E2>n I2C1 SCL v<E0> SDA
       |                         ^
-D:/embeded/stm32f103c8t6/main_nhung.c(175): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  175 |     // C?u h<EC>nh PB6 v<E0> PB7 l<E0> ch<E2>n I2C1 SCL v<E0> SDA
+D:/embeded/stm32f103c8t6/main_nhung.c(184): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  184 |     // C?u h<EC>nh PB6 v<E0> PB7 l<E0> ch<E2>n I2C1 SCL v<E0> SDA
       |                                   ^
-D:/embeded/stm32f103c8t6/main_nhung.c(175): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  175 |     // C?u h<EC>nh PB6 v<E0> PB7 l<E0> ch<E2>n I2C1 SCL v<E0> SDA
+D:/embeded/stm32f103c8t6/main_nhung.c(184): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  184 |     // C?u h<EC>nh PB6 v<E0> PB7 l<E0> ch<E2>n I2C1 SCL v<E0> SDA
       |                                          ^
-D:/embeded/stm32f103c8t6/main_nhung.c(175): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  175 |     // C?u h<EC>nh PB6 v<E0> PB7 l<E0> ch<E2>n I2C1 SCL v<E0> SDA
+D:/embeded/stm32f103c8t6/main_nhung.c(184): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  184 |     // C?u h<EC>nh PB6 v<E0> PB7 l<E0> ch<E2>n I2C1 SCL v<E0> SDA
       |                                                          ^
-D:/embeded/stm32f103c8t6/main_nhung.c(182): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  182 |     I2C1->CR1 |= I2C_CR1_PE; // K<ED>ch ho?t I2C
+D:/embeded/stm32f103c8t6/main_nhung.c(191): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  191 |     I2C1->CR1 |= I2C_CR1_PE; // K<ED>ch ho?t I2C
       |                                  ^
-D:/embeded/stm32f103c8t6/main_nhung.c(187): warning: invalid UTF-8 in comment [-Winvalid-utf8]
-  187 |     while (!(I2C1->SR1 & I2C_SR1_SB));  // <D0>?i bit SB du?c set
+D:/embeded/stm32f103c8t6/main_nhung.c(196): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  196 |     while (!(I2C1->SR1 & I2C_SR1_SB));  // <D0>?i bit SB du?c set
       |                                            ^
-D:/embeded/stm32f103c8t6/main_nhung.c(204): warning: no previous prototype for function 'I2C_Write_Data' [-Wmissing-prototypes]
-  204 | void I2C_Write_Data(uint8_t data) {
+D:/embeded/stm32f103c8t6/main_nhung.c(213): warning: no previous prototype for function 'I2C_Write_Data' [-Wmissing-prototypes]
+  213 | void I2C_Write_Data(uint8_t data) {
       |      ^
-D:/embeded/stm32f103c8t6/main_nhung.c(204): note: declare 'static' if the function is not intended to be used outside of this translation unit
-  204 | void I2C_Write_Data(uint8_t data) {
+D:/embeded/stm32f103c8t6/main_nhung.c(213): note: declare 'static' if the function is not intended to be used outside of this translation unit
+  213 | void I2C_Write_Data(uint8_t data) {
       | ^
       | static 
-D:/embeded/stm32f103c8t6/main_nhung.c(229): warning: implicit conversion loses integer precision: 'volatile uint16_t' (aka 'volatile unsigned short') to 'uint8_t' (aka 'unsigned char') [-Wimplicit-int-conversion]
-  229 |     data = I2C1->DR;
+D:/embeded/stm32f103c8t6/main_nhung.c(238): warning: implicit conversion loses integer precision: 'volatile uint16_t' (aka 'volatile unsigned short') to 'uint8_t' (aka 'unsigned char') [-Wimplicit-int-conversion]
+  238 |     data = I2C1->DR;
       |          ~ ~~~~~~^~
-D:/embeded/stm32f103c8t6/main_nhung.c(244): warning: implicit conversion loses integer precision: 'int' to 'int16_t' (aka 'short') [-Wimplicit-int-conversion]
-  244 |     accelData[0] = ((int16_t)I2C_Read_Data(MPU6050_ACCEL_XOUT_H) << 8) | I2C_Read_Data(MPU6050_ACCEL_XOUT_L);
-      |                  ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-D:/embeded/stm32f103c8t6/main_nhung.c(245): warning: implicit conversion loses integer precision: 'int' to 'int16_t' (aka 'short') [-Wimplicit-int-conversion]
-  245 |     accelData[1] = ((int16_t)I2C_Read_Data(MPU6050_ACCEL_YOUT_H) << 8) | I2C_Read_Data(MPU6050_ACCEL_YOUT_L);
-      |                  ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-D:/embeded/stm32f103c8t6/main_nhung.c(246): warning: implicit conversion loses integer precision: 'int' to 'int16_t' (aka 'short') [-Wimplicit-int-conversion]
-  246 |     accelData[2] = ((int16_t)I2C_Read_Data(MPU6050_ACCEL_ZOUT_H) << 8) | I2C_Read_Data(MPU6050_ACCEL_ZOUT_L);
-      |                  ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-D:/embeded/stm32f103c8t6/main_nhung.c(155): warning: unsafe buffer access [-Wunsafe-buffer-usage]
-  155 |                                 y = accelData[1];
-      |                                     ^~~~~~~~~
-D:/embeded/stm32f103c8t6/main_nhung.c(156): warning: unsafe buffer access [-Wunsafe-buffer-usage]
-  156 |                                 z = accelData[2];
-      |                                     ^~~~~~~~~
-D:/embeded/stm32f103c8t6/main_nhung.c(245): warning: unsafe buffer access [-Wunsafe-buffer-usage]
-  245 |     accelData[1] = ((int16_t)I2C_Read_Data(MPU6050_ACCEL_YOUT_H) << 8) | I2C_Read_Data(MPU6050_ACCEL_YOUT_L);
-      |     ^~~~~~~~~
-D:/embeded/stm32f103c8t6/main_nhung.c(246): warning: unsafe buffer access [-Wunsafe-buffer-usage]
-  246 |     accelData[2] = ((int16_t)I2C_Read_Data(MPU6050_ACCEL_ZOUT_H) << 8) | I2C_Read_Data(MPU6050_ACCEL_ZOUT_L);
-      |     ^~~~~~~~~
-32 warnings generated.
+D:/embeded/stm32f103c8t6/main_nhung.c(253): warning: implicit conversion loses integer precision: 'int' to 'int16_t' (aka 'short') [-Wimplicit-int-conversion]
+  253 |      *x = ((int16_t)I2C_Read_Data(MPU6050_ACCEL_XOUT_H) << 8) | I2C_Read_Data(MPU6050_ACCEL_XOUT_L);
+      |         ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/embeded/stm32f103c8t6/main_nhung.c(254): warning: implicit conversion loses integer precision: 'int' to 'int16_t' (aka 'short') [-Wimplicit-int-conversion]
+  254 |      *y = ((int16_t)I2C_Read_Data(MPU6050_ACCEL_YOUT_H) << 8) | I2C_Read_Data(MPU6050_ACCEL_YOUT_L);
+      |         ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/embeded/stm32f103c8t6/main_nhung.c(255): warning: implicit conversion loses integer precision: 'int' to 'int16_t' (aka 'short') [-Wimplicit-int-conversion]
+  255 |      *z = ((int16_t)I2C_Read_Data(MPU6050_ACCEL_ZOUT_H) << 8) | I2C_Read_Data(MPU6050_ACCEL_ZOUT_L);
+      |         ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/embeded/stm32f103c8t6/main_nhung.c(289): warning: implicit conversion loses floating-point precision: 'double' to 'float' [-Wimplicit-float-conversion]
+  289 |                 float a = (x / 16384.0f) * 9.81;
+      |                       ~   ~~~~~~~~~~~~~~~^~~~~~
+D:/embeded/stm32f103c8t6/main_nhung.c(289): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  289 |                 float a = (x / 16384.0f) * 9.81;
+      |                            ~~^~~~~~~~~~  ~
+D:/embeded/stm32f103c8t6/main_nhung.c(290): warning: implicit conversion loses floating-point precision: 'double' to 'float' [-Wimplicit-float-conversion]
+  290 |                 float b = (y / 16384.0f) * 9.81;
+      |                       ~   ~~~~~~~~~~~~~~~^~~~~~
+D:/embeded/stm32f103c8t6/main_nhung.c(290): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  290 |                 float b = (y / 16384.0f) * 9.81;
+      |                            ~~^~~~~~~~~~  ~
+D:/embeded/stm32f103c8t6/main_nhung.c(291): warning: implicit conversion loses floating-point precision: 'double' to 'float' [-Wimplicit-float-conversion]
+  291 |                 float c = (z / 16384.0f) * 9.81;
+      |                       ~   ~~~~~~~~~~~~~~~^~~~~~
+D:/embeded/stm32f103c8t6/main_nhung.c(291): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  291 |                 float c = (z / 16384.0f) * 9.81;
+      |                            ~~^~~~~~~~~~  ~
+D:/embeded/stm32f103c8t6/main_nhung.c(292): warning: implicit conversion loses floating-point precision: 'double' to 'float' [-Wimplicit-float-conversion]
+  292 |                 return sqrt(a*a + b*b + c*c);
+      |                 ~~~~~~ ^~~~~~~~~~~~~~~~~~~~~
+D:/embeded/stm32f103c8t6/main_nhung.c(292): warning: implicit conversion increases floating-point precision: 'float' to 'double' [-Wdouble-promotion]
+  292 |                 return sqrt(a*a + b*b + c*c);
+      |                        ~~~~ ~~~~~~~~~~^~~~~
+D:/embeded/stm32f103c8t6/main_nhung.c(295): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  295 | // h<E0>m ph<E1>t hien ng<E3> 1 - true, 0 - false
+      |     ^
+D:/embeded/stm32f103c8t6/main_nhung.c(295): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  295 | // h<E0>m ph<E1>t hien ng<E3> 1 - true, 0 - false
+      |             ^
+D:/embeded/stm32f103c8t6/main_nhung.c(295): warning: invalid UTF-8 in comment [-Winvalid-utf8]
+  295 | // h<E0>m ph<E1>t hien ng<E3> 1 - true, 0 - false
+      |                          ^
+D:/embeded/stm32f103c8t6/main_nhung.c(297): warning: unused variable 'fall_start_time' [-Wunused-variable]
+  297 |     static unsigned long fall_start_time = 0;
+      |                          ^~~~~~~~~~~~~~~
+D:/embeded/stm32f103c8t6/main_nhung.c(366): warning: passing 'volatile int16_t *' (aka 'volatile short *') to parameter of type 'int16_t *' (aka 'short *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+  366 |             MPU6050_Read_Accel(&X, &Y, &Z);
+      |                                ^~
+D:/embeded/stm32f103c8t6/main_nhung.c(251): note: passing argument to parameter 'x' here
+  251 | void MPU6050_Read_Accel(int16_t *x, int16_t *y, int16_t *z) {
+      |                                  ^
+D:/embeded/stm32f103c8t6/main_nhung.c(366): warning: passing 'volatile int16_t *' (aka 'volatile short *') to parameter of type 'int16_t *' (aka 'short *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+  366 |             MPU6050_Read_Accel(&X, &Y, &Z);
+      |                                    ^~
+D:/embeded/stm32f103c8t6/main_nhung.c(251): note: passing argument to parameter 'y' here
+  251 | void MPU6050_Read_Accel(int16_t *x, int16_t *y, int16_t *z) {
+      |                                              ^
+D:/embeded/stm32f103c8t6/main_nhung.c(366): warning: passing 'volatile int16_t *' (aka 'volatile short *') to parameter of type 'int16_t *' (aka 'short *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+  366 |             MPU6050_Read_Accel(&X, &Y, &Z);
+      |                                        ^~
+D:/embeded/stm32f103c8t6/main_nhung.c(251): note: passing argument to parameter 'z' here
+  251 | void MPU6050_Read_Accel(int16_t *x, int16_t *y, int16_t *z) {
+      |                                                          ^
+D:/embeded/stm32f103c8t6/main_nhung.c(134): warning: no previous extern declaration for non-static variable 'X' [-Wmissing-variable-declarations]
+  134 | volatile int16_t X, Y, Z;
+      |                  ^
+D:/embeded/stm32f103c8t6/main_nhung.c(134): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+  134 | volatile int16_t X, Y, Z;
+      |          ^
+D:/embeded/stm32f103c8t6/main_nhung.c(134): warning: no previous extern declaration for non-static variable 'Y' [-Wmissing-variable-declarations]
+  134 | volatile int16_t X, Y, Z;
+      |                     ^
+D:/embeded/stm32f103c8t6/main_nhung.c(134): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+  134 | volatile int16_t X, Y, Z;
+      |          ^
+D:/embeded/stm32f103c8t6/main_nhung.c(134): warning: no previous extern declaration for non-static variable 'Z' [-Wmissing-variable-declarations]
+  134 | volatile int16_t X, Y, Z;
+      |                        ^
+D:/embeded/stm32f103c8t6/main_nhung.c(134): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+  134 | volatile int16_t X, Y, Z;
+      |          ^
+48 warnings generated.
 compiling main_nhung.c...
 linking...
-Program Size: Code=1752 RO-data=252 RW-data=0 ZI-data=1632  
-".\Objects\BTL_nhung.axf" - 0 Error(s), 37 Warning(s).
+Program Size: Code=5164 RO-data=268 RW-data=8 ZI-data=1640  
+".\Objects\BTL_nhung.axf" - 0 Error(s), 53 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -190,10 +258,10 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE@5.6.0
 
    * Component: Keil::Device:Startup@1.0.0
+      Source file:   Device/Source/ARM/STM32F1xx_OPT.s
       Source file:   Device/Source/system_stm32f10x.c
       Source file:   Device/Source/ARM/startup_stm32f10x_md.s
       Include file:  RTE_Driver/Config/RTE_Device.h
-      Source file:   Device/Source/ARM/STM32F1xx_OPT.s
 Build Time Elapsed:  00:00:01
 </pre>
 </body>

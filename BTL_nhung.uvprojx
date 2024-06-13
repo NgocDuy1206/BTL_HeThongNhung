@@ -387,7 +387,7 @@
             <File>
               <FileName>main_nhung.c</FileName>
               <FileType>1</FileType>
-              <FilePath>D:\embeded\stm32f103c8t6\main_nhung.c</FilePath>
+              <FilePath>.\main_nhung.c</FilePath>
             </File>
           </Files>
         </Group>

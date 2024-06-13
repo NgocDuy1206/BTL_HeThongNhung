@@ -1,114 +1,14 @@
-//#include <stm32f10x.h>
-//#include <stdint.h>
 
-//#define RCC_APB2ENR   (*(volatile uint32_t *)0x40021018)
-//#define GPIOA_CRL     (*(volatile uint32_t *)0x40010800)
-//#define GPIOA_ODR     (*(volatile uint32_t *)0x4001080C)
-//#define GPIOB_CRL     (*(volatile uint32_t *)0x40010C00)
-//#define GPIOB_ODR     (*(volatile uint32_t *)0x40010C0C)
-//#define GPIOC_CRH     (*(volatile uint32_t *)0x40011004)
-//#define GPIOC_ODR     (*(volatile uint32_t *)0x4001100C)
-
-//// Macros for setting/clearing bits
-//#define SET_BIT(REG, BIT)     ((REG) |= (BIT))
-//#define CLEAR_BIT(REG, BIT)   ((REG) &= ~(BIT))
-
-//#define LCD_RS_PIN  (1U << 0)  // PB0
-//#define LCD_RW_PIN  (1U << 1)  // PB1
-//#define LCD_E_PIN   (1U << 13)  // PC13
-//#define LCD_DATA_PINS_MASK  0xFF // PA0-PA7
-
-//void LCD_SendCommand(unsigned char cmd);
-//void LCD_SendData(unsigned char data);
-//void LCD_SendString(char* str);
-//void GPIO_Config(void);
-//void LCD_Init(void);
-//void Delay_ms(unsigned int time);
-
-//int main(void) {
-//    GPIO_Config(); // Configure GPIO for LCD
-//    LCD_Init();    // Initialize the LCD
-
-//    
-//    while (1) {
-//        // Main loop
-//    }
-//}
-
-//void GPIO_Config(void) {
-//    // Enable clock for GPIOA and GPIOB
-//    SET_BIT(RCC_APB2ENR, (1U << 2)); // GPIOA clock
-//    SET_BIT(RCC_APB2ENR, (1U << 3)); // GPIOB clock
-//		SET_BIT(RCC_APB2ENR, (1U << 4)); // GPIOC clock
-
-//    // Configure PA0-PA7 as output push-pull
-//    GPIOA_CRL = 0x11111111;
-
-//    // Configure PB0-PB2 as output push-pull
-//    GPIOB_CRL &= ~(0xFF);
-//    GPIOB_CRL |= 0x11;
-//	
-//		GPIOC_CRH = (1 << 20);
-//}
-
-//void LCD_SendCommand(uint8_t command) {
-//    CLEAR_BIT(GPIOB_ODR, LCD_RS_PIN); // RS = 0 for command
-//    CLEAR_BIT(GPIOB_ODR, LCD_RW_PIN); // RW = 0 for write
-
-//     // Put command on data bus
-//		
-//		SET_BIT(GPIOC_ODR, LCD_E_PIN);	// E = 1 for enable
-//	
-//		GPIOA_ODR = command;
-//		
-//    CLEAR_BIT(GPIOC_ODR, LCD_E_PIN);  // E = 0 for disable
-//}
-
-//void LCD_SendData(uint8_t data) {
-//    SET_BIT(GPIOB_ODR, LCD_RS_PIN);   // RS = 1 for data
-//    CLEAR_BIT(GPIOB_ODR, LCD_RW_PIN); // RW = 0 for write
-//    
-
-//     // Put data on data bus
-//		
-//		SET_BIT(GPIOC_ODR, LCD_E_PIN);    // E = 1 for enable
-//	
-//		GPIOA_ODR = data;
-//		
-//    CLEAR_BIT(GPIOC_ODR, LCD_E_PIN);  // E = 0 for disable
-//		
-//}
-
-//void LCD_Init(void) 
-//{
-//		LCD_SendCommand(0x38); 	
-//		LCD_SendCommand(0x0C); 
-//		LCD_SendCommand(0x01); 
-//		LCD_SendString("HELLO"); 
-//		LCD_SendCommand(0xC0); 
-//		LCD_SendString("BYE"); 
-//}
-
-//void LCD_SendString(char* str) {
-//   for (unsigned int i = 0; str[i] != 0; i++)
-//	{
-//			LCD_SendData(str[i]);
-//	}
-//}
-
-//void Delay_ms(unsigned int time)
-//{
-//		unsigned int t = time * 12000;
-//		while(t > 0) {t--;}
-//}
 
 
 #include "stm32f10x.h"
 #include <stdio.h>
 #include <math.h>
 
-#define MPU6050_ADDRESS 0xD0  // Ð?a ch? I2C c?a MPU6050
+// dia chi cua mpu 6050
+#define MPU6050_ADDRESS 0xD0  
 
+// dia chi cac thanh ghi can dung cua mpu6050
 #define MPU6050_PWR_MGMT_1 0x6B
 #define MPU6050_SMPLRT_DIV 0x19
 #define MPU6050_CONFIG 0x1A
@@ -127,61 +27,105 @@
 
 #define FALL_THRESHOLD_LOW 0.5  // Ngu?ng th?p cho t?ng gia t?c (g)
 #define FALL_THRESHOLD_HIGH 2.0 // Ngu?ng cao cho t?ng gia t?c (g)
-#define FALL_TIME_THRESHOLD 200 // Ngu?ng th?i gian cho cú ngã (ms)
+#define FALL_TIME_THRESHOLD 200d // Ngu?ng th?i gian cho cú ngã (ms)
 
+float Sensitivity = 16384.0f;		// Do nhay thiet bi
+float G = 9.81;									// gia toc trai dat
 
-volatile float Threshold = (1.58*9.81); 
 volatile int16_t X, Y, Z;
 enum status{off, on};
 enum status system = on;
 
+// function câu hình chung
 void SysClkConf_72MHz(void);
-void Led_Init();
+void Delay_Ms(uint8_t time);
 
+// các function xu lý led
+void Led_Init(void);
+void LCD_Init(void);
+void LCD_Send_Command(unsigned char addr);
+void LCD_Send_Data(unsigned char data);
+void GPIO_Init_Pin(void);
+void Delay_us(uint32_t us);
+void Delay_ms(uint32_t ms);
+void LCD_Enable(void);
+void LCD_Send_String(char* str);
+void LCD_Mode_4bit(unsigned char addr);
+void LCD_Clear(void);
+
+// các function dùng I2C
 void I2C_Init(void);
 void I2C_Start(void);
 void I2C_Stop(void);
 void I2C_Write(uint8_t reg, uint8_t data);
 void I2C_Write_Addr(uint8_t addr);
 void I2C_Write_Addr_Reg(uint8_t addr);
+void I2C_Write_Data(uint8_t data);
 uint8_t I2C_Read_Data(uint8_t addr);
 
 void MPU6050_Init(void);
 void MPU6050_Read_Accel(int16_t *x, int16_t *y, int16_t *z);
 
+// các function tính toán
 float Calculate_Magnitude(int16_t x, int16_t y, int16_t z);
 int Detect_Fall(int16_t x, int16_t y, int16_t z);
 void Convert_Unit(int16_t *x, int16_t *y, int16_t *z);
 
+// các function dành cho interrupt
 void EXTI_Config(void);
 void EXTI0_IRQHandler(void);
 void EXTI1_IRQHandler(void);
 
-
+void Initial(void);
+void Run(void);
 
 int main(void) {
+		Initial();
+		Run();
+}
+
+// khoi tao toan bo cac thanh phan
+void Initial(void)
+{
 		SysClkConf_72MHz();
     I2C_Init();
+		LCD_Init();
     MPU6050_Init();
-		Led_Init();
+		EXTI_Config();
+}
+
+
+void Run(void)
+{
 		int16_t x, y, z;
     while (1) {
-				MPU6050_Read_Accel(&x, &y, &z);
-				float g = Calculate_Magnitude(x, y, z);
+				if (system == on)
+				{
+						MPU6050_Read_Accel(&x, &y, &z);
+						if (Detect_Fall == 1){
+								LCD_Clear();
+								LCD_Send_String("FALL");
+								GPIOC->ODR &= ~(1<<13);					
+						} else {
+								GPIOC->ODR &= ~(1<<13);	
+						}
+							
+				} else {
+						LCD_Clear();
+						LCD_Send_String("OVER");
+				}
     }
 }
-void Led_Init(void)
-{
-		RCC->APB2ENR |= (1<<4);
-		GPIOC->CRH |= 3 << 20;
-		GPIOC->ODR &= ~(1 << 13);
-}
-void I2C_Init(void) {
-    // Kh?i t?o các chân I2C và thi?t l?p t?c d? I2C
-    RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;  // B?t clock cho Port B
-    RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;  // B?t clock cho I2C1
 
-    // C?u hình PB6 và PB7 là chân I2C1 SCL và SDA
+
+// cau hinh cho giao thuc I2C
+void I2C_Init(void) {
+    // Bat I2C và GPIOB
+    RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;  // Bat clock cho Port B
+    RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;  // Bat clock cho I2C1
+
+    // cau hinh cho 2 chan pb6 (du lieu) va pb7 (clock) 
+		// output 
     GPIOB->CRL |= GPIO_CRL_MODE6 | GPIO_CRL_CNF6 | GPIO_CRL_MODE7 | GPIO_CRL_CNF7;
     
     // Thi?t l?p I2C1
@@ -191,31 +135,41 @@ void I2C_Init(void) {
     I2C1->CR1 |= I2C_CR1_PE; // Kích ho?t I2C
 }
 
+// m? giao th?c I2C
 void I2C_Start(void) {
     I2C1->CR1 |= I2C_CR1_START;
     while (!(I2C1->SR1 & I2C_SR1_SB));  // Ð?i bit SB du?c set
 }
 
+// dóng giao th?c I2C
 void I2C_Stop(void) {
     I2C1->CR1 |= I2C_CR1_STOP;
 }
+
+// gui dia chi cua slave
 void I2C_Write_Addr(uint8_t addr)
 {
 		I2C1->DR = addr;
 		while (!(I2C1->SR1 & I2C_SR1_ADDR)); 
 		(void)I2C1->SR2;
 }
+
+// gui dia chi thanh ghi muon doc
 void I2C_Write_Addr_Reg(uint8_t addr)
 {
 		I2C1->DR = addr;
 		while (!(I2C1->SR1 & I2C_SR1_TXE));
 }
+
+// gui du lieu
 void I2C_Write_Data(uint8_t data) {
     while (!(I2C1->SR1 & I2C_SR1_TXE));
     I2C1->DR = data;
     while (!(I2C1->SR1 & I2C_SR1_BTF));
 }
 
+
+// gui du lieu den thanh ghi mong muon
 void I2C_Write(uint8_t reg, uint8_t data)
 {
 		I2C_Start();
@@ -224,6 +178,8 @@ void I2C_Write(uint8_t reg, uint8_t data)
 		I2C_Write_Data(data);
 		I2C_Stop();
 }
+
+// doc du lieu cua thanh ghi
 uint8_t I2C_Read_Data(uint8_t addr)
 {
 		uint8_t data;
@@ -240,6 +196,8 @@ uint8_t I2C_Read_Data(uint8_t addr)
 		
 }
 
+
+// khoi tao mpu6050
 void MPU6050_Init(void) {
     I2C_Write(MPU6050_PWR_MGMT_1, 0x00); // wake up MPU6050
     I2C_Write(MPU6050_CONFIG, 0x00); // tat FSYNC, dai 260Hz
@@ -248,6 +206,8 @@ void MPU6050_Init(void) {
     I2C_Write(MPU6050_INT_PIN_CFG, 0x10); // xoa cac bit int status khi doc
 }
 
+
+// doc gia tri thu duoc tu cam bien mpu6050
 void MPU6050_Read_Accel(int16_t *x, int16_t *y, int16_t *z) {
     
      *x = ((int16_t)I2C_Read_Data(MPU6050_ACCEL_XOUT_H) << 8) | I2C_Read_Data(MPU6050_ACCEL_XOUT_L);
@@ -256,41 +216,55 @@ void MPU6050_Read_Accel(int16_t *x, int16_t *y, int16_t *z) {
     
 }
 
+
+// cau hinh chung cua he thong
 void SysClkConf_72MHz(void) {
     //su dung hse
     RCC->CR |= RCC_CR_HSEON;
-    while((RCC->CR & RCC_CR_HSERDY) == 0); // doi san sang
+    while((RCC->CR & RCC_CR_HSERDY) == 0); 			// doi san sang
 
     //cau hinh PLL 
-    RCC->CFGR |= RCC_CFGR_PLLMULL9; // *9 = systemclock = 72MHz
-    RCC->CFGR |= RCC_CFGR_ADCPRE_DIV6; // ADC prescale 6.
-    RCC->CFGR |= RCC_CFGR_PPRE1_DIV2; //APB1 prescale 2.
+    RCC->CFGR |= RCC_CFGR_PLLMULL9; 						// *9 = systemclock = 72MHz
+    RCC->CFGR |= RCC_CFGR_ADCPRE_DIV6; 					// ADC prescale 6.
+    RCC->CFGR |= RCC_CFGR_PPRE1_DIV2; 					//APB1 prescale 2.
 
     //chon bo nguon hse cho pll
-    RCC->CFGR |= RCC_CFGR_PLLSRC; // PLLSRC HSE
+    RCC->CFGR |= RCC_CFGR_PLLSRC; 							// PLLSRC HSE
 
     //bat pll
     RCC->CR |= RCC_CR_PLLON;
-    while((RCC->CR & RCC_CR_PLLRDY) == 0); // wait PLLRDY.
+    while((RCC->CR & RCC_CR_PLLRDY) == 0); 			// wait PLLRDY.
 
     //doi tu sysclock sang pll
     RCC->CFGR |= RCC_CFGR_SW_PLL;
-    while((RCC->CFGR & RCC_CFGR_SWS) == 0); //wait SWS.
+    while((RCC->CFGR & RCC_CFGR_SWS) == 0); 		//wait SWS.
 
     //tat nguon he thong (hsi)
-    RCC->CR &= ~(RCC_CR_HSION); // off HSION
+    RCC->CR &= ~(RCC_CR_HSION); 								// off HSION
     while((RCC->CR & RCC_CR_HSIRDY) == RCC_CR_HSIRDY);
 }
 
 
-
-float Calculate_Magnitude(int16_t x, int16_t y, int16_t z)
+// delay chuong trinh mili giay
+void Delay_Ms(uint8_t time)
 {
-		float a = (x / 16384.0f) * 9.81;
-		float b = (y / 16384.0f) * 9.81;
-		float c = (z / 16384.0f) * 9.81;
+	for(int i = 0; i < time; i++){
+			SysTick->LOAD = 9000-1;
+			SysTick->VAL = 0;
+			SysTick->CTRL |= SysTick_CTRL_ENABLE;
+			while(!(SysTick->CTRL & SysTick_CTRL_COUNTFLAG));
+			SysTick->CTRL &= ~SysTick_CTRL_ENABLE;
+	}
+}
+// tinh do lon gia toc
+float Calculate_Magnitude(int16_t x, int16_t y, int16_t z)
+{		
+		float a = (x / Sensitivity) * G;
+		float b = (y / Sensitivity) * G;
+		float c = (z / Sensitivity) * G;
 		return sqrt(a*a + b*b + c*c);
 }
+
 
 // hàm phát hien ngã 1 - true, 0 - false
 int Detect_Fall(int16_t x, int16_t y, int16_t z) {
@@ -308,12 +282,14 @@ int Detect_Fall(int16_t x, int16_t y, int16_t z) {
 //    } else if (magnitude > FALL_THRESHOLD_HIGH) {
 //        fall_start_time = 0;
 //    }
-		if (magnitude > Threshold) return 1;
+		if (magnitude > FALL_THRESHOLD_HIGH * G) return 1;
     return 0;
 }
 
+
+// cau hinh cho interrupt o chan pa0 và pa1
 void EXTI_Config(void) {
-    // cap xung cho afio v? gpioa de su dung lam ngat cong tac
+    // cap xung cho afio va gpioa 
     RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
     RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 		
@@ -328,50 +304,130 @@ void EXTI_Config(void) {
 		GPIOA->ODR |= 1<<1;
 		
     // cau h?nh afio v? exti
-    AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI0_PA | AFIO_EXTICR1_EXTI1_PA; // bat 2 chan pa0 va pa1 voi nhiem vu ngat ngoai
-    EXTI->PR |= EXTI_PR_PR0 | EXTI_PR_PR1; // xoa pending 
+    AFIO->EXTICR[0] |= AFIO_EXTICR1_EXTI1_PA; // line 0 va 1 cua chan pa
+    EXTI->PR |= EXTI_PR_PR1; 														// xoa pending 
     
 		//chon suon xuong
-		EXTI->FTSR |= EXTI_FTSR_TR0 | EXTI_FTSR_TR1;
+		EXTI->FTSR |= EXTI_FTSR_TR1;
 
     // xoa suon len    
-    EXTI->RTSR &= ~(EXTI_RTSR_TR0);
     EXTI->RTSR &= ~(EXTI_RTSR_TR1);
 
     // chon interrupt xoa event
-    EXTI->IMR |= EXTI_IMR_MR0 | EXTI_IMR_MR1;
-    EXTI->EMR &= ~(EXTI_EMR_MR0);
+    EXTI->IMR |= EXTI_IMR_MR1;
     EXTI->EMR &= ~(EXTI_EMR_MR1);
 
     // dat muc do uu tien
-		// ngat cua mpu6050
-    NVIC_SetPriority(EXTI0_IRQn, 1);
-    NVIC_EnableIRQ(EXTI0_IRQn);
 		//ngat cua nut tat bat he thong
     NVIC_SetPriority(EXTI1_IRQn, 0);
     NVIC_EnableIRQ(EXTI1_IRQn);
 }
 
+
+// xu ly ngat pa1
 void EXTI1_IRQHandler(void) {
     if(EXTI->PR & EXTI_PR_PR1) {
         EXTI->PR |= EXTI_PR_PR1;
-        system = !system; // dao nguoc che do
+        system = !system; 
     }
 }
 
-void EXTI0_IRQHandler(void) {
-		if(EXTI->PR & EXTI_PR_PR0) {
-        EXTI->PR |= EXTI_PR_PR0;
-        if (system) {
-            MPU6050_Read_Accel(&X, &Y, &Z);
-            if (Detect_Fall(X, Y, Z)) {
-//								lcd_Writedata(1);
-								GPIOC->ODR ^= (1 << 13);
-//								delayMs(100);
-						} else {
-//								lcd_Writedata(0);
-                GPIOC->BSRR |= (1 << 13); // tat den
-						}
-				}
-		}
+// khoi tao LCD
+void LCD_Init(void)
+{
+		GPIO_Init_Pin();
+		Delay_ms(1);
+		LCD_Mode_4bit(0x33);
+		LCD_Mode_4bit(0x32);
+		
+		LCD_Send_Command(0x28);
+		LCD_Send_Command(0x02);
+		LCD_Send_Command(0x0C);
+		LCD_Send_Command(0x01);
+	
+		LCD_Send_String("WELCOM");
+}	
+// vao che do 4 bit cua LCD
+void LCD_Mode_4bit(unsigned char addr)
+{
+		GPIOB->ODR &= ~(1U<<0);
+	
+		GPIOA->ODR = (GPIOA->ODR & 0x0F) | (addr & 0xF0);
+		LCD_Enable();
+		Delay_ms(5);
+
+		GPIOA->ODR = ((GPIOA->ODR & 0x0F) | (addr << 4));
+		LCD_Enable();
+		Delay_us(100);
+}
+// LCD enable
+void LCD_Enable(void)
+{
+		GPIOB->ODR |= (1<<1);
+		Delay_us(1);
+		GPIOB->ODR &= ~(1U<<1);
+		Delay_ms(2);
+}
+// gui cac lenh
+void LCD_Send_Command(unsigned char addr)
+{
+		GPIOB->ODR &= ~(1U<<0);
+	
+		GPIOA->ODR = (GPIOA->ODR & 0x0F) | (addr & 0xF0);
+		LCD_Enable();
+
+		GPIOA->ODR = ((GPIOA->ODR & 0x0F) | (addr << 4));
+		LCD_Enable();
+	
+}
+// hien thi 1 ki tu
+void LCD_Send_Data(unsigned char data)
+{
+		GPIOB->ODR |= (1U<<0);
+	
+		GPIOA->ODR = (GPIOA->ODR & 0x0F) | (data & 0xF0);
+		LCD_Enable();
+	
+		GPIOA->ODR = ((GPIOA->ODR & 0x0F) | (data << 4));
+		LCD_Enable();
+}
+// GPIO cho led LCD
+void GPIO_Init_Pin(void)
+{
+		RCC->APB2ENR |= 1<<3 | 1 << 2;
+		GPIOA->CRL |= 0x1111 << 16;
+		GPIOB->CRL |= 0x11;
+}
+
+
+void Led_Init(void)
+{
+		// GPIO C - pin pc13 - 50MHz
+		RCC->APB2ENR |= 1 << 4;
+		GPIOC->CRH |= 3 << 20;
+		// tat led
+		GPIOC->ODR |= 1 << 13;
+}
+// de lay
+void Delay_us(uint32_t us) {
+    for (uint32_t i = 0; i < us * 8; i++) {
+        __NOP(); // Assuming each __NOP() takes 125ns on a 64MHz clock
+    }
+}
+
+void Delay_ms(uint32_t ms) {
+    for (uint32_t i = 0; i < ms; i++) {
+        Delay_us(1000);
+    }
+}
+void LCD_Clear(void)
+{
+		LCD_Send_Command(0x01);
+}
+// hien thi 1 string
+void LCD_Send_String(char* str) {
+   for (unsigned int i = 0; str[i] != 0; i++)
+	{
+			LCD_Send_Data(str[i]);
+	}
 }

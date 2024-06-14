@@ -1,12 +1,9 @@
-
-
-
 #include "stm32f10x.h"
 #include <stdio.h>
 #include <math.h>
 
 // dia chi cua mpu 6050
-#define MPU6050_ADDRESS 0xD0  
+#define MPU6050_ADDRESS 0xD0
 
 // dia chi cac thanh ghi can dung cua mpu6050
 #define MPU6050_PWR_MGMT_1 0x6B
@@ -27,14 +24,14 @@
 
 #define FALL_THRESHOLD_LOW 0.5  // Ngu?ng th?p cho t?ng gia t?c (g)
 #define FALL_THRESHOLD_HIGH 2.0 // Ngu?ng cao cho t?ng gia t?c (g)
-#define FALL_TIME_THRESHOLD 200d // Ngu?ng th?i gian cho cú ngã (ms)
+#define FALL_TIME_THRESHOLD 200 // Ngu?ng th?i gian cho cú ngã (ms)
 
 float Sensitivity = 16384.0f;		// Do nhay thiet bi
 float G = 9.81;									// gia toc trai dat
 
 volatile int16_t X, Y, Z;
 enum status{off, on};
-enum status system = on;
+enum status system;
 
 // function câu hình chung
 void SysClkConf_72MHz(void);
@@ -51,7 +48,6 @@ void Delay_ms(uint32_t ms);
 void LCD_Enable(void);
 void LCD_Send_String(char* str);
 void LCD_Mode_4bit(unsigned char addr);
-void LCD_Clear(void);
 
 // các function dùng I2C
 void I2C_Init(void);
@@ -73,13 +69,13 @@ void Convert_Unit(int16_t *x, int16_t *y, int16_t *z);
 
 // các function dành cho interrupt
 void EXTI_Config(void);
-void EXTI0_IRQHandler(void);
 void EXTI1_IRQHandler(void);
+void EXTI0_IRQHandler(void);
 
 void Initial(void);
 void Run(void);
 
-int main(void) {
+ int main(void) {
 		Initial();
 		Run();
 }
@@ -88,9 +84,11 @@ int main(void) {
 void Initial(void)
 {
 		SysClkConf_72MHz();
-    I2C_Init();
+		I2C_Init();
+		Led_Init();
 		LCD_Init();
-    MPU6050_Init();
+    
+		MPU6050_Init();
 		EXTI_Config();
 }
 
@@ -98,21 +96,28 @@ void Initial(void)
 void Run(void)
 {
 		int16_t x, y, z;
+		system = on;
+		Delay_ms(1000);
+		LCD_Send_Command(0x01);
+		LCD_Send_String("Start");
     while (1) {
 				if (system == on)
-				{
+				{		
+						// doc du lieu cam bien
 						MPU6050_Read_Accel(&x, &y, &z);
-						if (Detect_Fall == 1){
-								LCD_Clear();
+						if (Detect_Fall(x,y,z) == 1){
+							
+								// hien thi va canh bao nga
+								LCD_Send_Command(0x01);
 								LCD_Send_String("FALL");
-								GPIOC->ODR &= ~(1<<13);					
+								GPIOC->ODR &= ~(1<<13);		
+								system = off;
 						} else {
-								GPIOC->ODR &= ~(1<<13);	
+								GPIOC->BSRR |= (1<<13);	
 						}
 							
 				} else {
-						LCD_Clear();
-						LCD_Send_String("OVER");
+
 				}
     }
 }
@@ -124,7 +129,7 @@ void I2C_Init(void) {
     RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;  // Bat clock cho Port B
     RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;  // Bat clock cho I2C1
 
-    // cau hinh cho 2 chan pb6 (du lieu) va pb7 (clock) 
+    
 		// output 
     GPIOB->CRL |= GPIO_CRL_MODE6 | GPIO_CRL_CNF6 | GPIO_CRL_MODE7 | GPIO_CRL_CNF7;
     
@@ -150,6 +155,7 @@ void I2C_Stop(void) {
 void I2C_Write_Addr(uint8_t addr)
 {
 		I2C1->DR = addr;
+		
 		while (!(I2C1->SR1 & I2C_SR1_ADDR)); 
 		(void)I2C1->SR2;
 }
@@ -205,7 +211,6 @@ void MPU6050_Init(void) {
     I2C_Write(MPU6050_INT_ENABLE, 0x01); // bat ngat thong bao khi du lieu san sang
     I2C_Write(MPU6050_INT_PIN_CFG, 0x10); // xoa cac bit int status khi doc
 }
-
 
 // doc gia tri thu duoc tu cam bien mpu6050
 void MPU6050_Read_Accel(int16_t *x, int16_t *y, int16_t *z) {
@@ -270,19 +275,7 @@ float Calculate_Magnitude(int16_t x, int16_t y, int16_t z)
 int Detect_Fall(int16_t x, int16_t y, int16_t z) {
     static unsigned long fall_start_time = 0;
     float magnitude = Calculate_Magnitude(x, y, z);
-
-//    if (magnitude < FALL_THRESHOLD_LOW) {
-//        if (fall_start_time == 0) {
-//            fall_start_time = millis();
-//        }
-//        if (millis() - fall_start_time > FALL_TIME_THRESHOLD) {
-//            fall_start_time = 0;
-//            return 1;
-//        }
-//    } else if (magnitude > FALL_THRESHOLD_HIGH) {
-//        fall_start_time = 0;
-//    }
-		if (magnitude > FALL_THRESHOLD_HIGH * G) return 1;
+		if (magnitude > FALL_THRESHOLD_HIGH*G) return 1;
     return 0;
 }
 
@@ -328,7 +321,15 @@ void EXTI_Config(void) {
 void EXTI1_IRQHandler(void) {
     if(EXTI->PR & EXTI_PR_PR1) {
         EXTI->PR |= EXTI_PR_PR1;
-        system = !system; 
+				if (system == on) {
+						system = off;
+						LCD_Send_Command(0x01);
+						LCD_Send_String("OVER");
+				} else {
+						system = on;
+						LCD_Send_Command(0x01);
+						LCD_Send_String("START");
+				}
     }
 }
 
@@ -337,78 +338,59 @@ void LCD_Init(void)
 {
 		GPIO_Init_Pin();
 		Delay_ms(1);
-		LCD_Mode_4bit(0x33);
-		LCD_Mode_4bit(0x32);
+		LCD_Mode_4bit(0x3);
 		
+		LCD_Mode_4bit(0x3);
+		
+		LCD_Mode_4bit(0x3);
+		
+		LCD_Mode_4bit(0x02);
+//		LCD_Mode_4bit(0x02);
+
+		Delay_ms(1);
 		LCD_Send_Command(0x28);
-		LCD_Send_Command(0x02);
+		Delay_ms(1);
 		LCD_Send_Command(0x0C);
 		LCD_Send_Command(0x01);
-	
-		LCD_Send_String("WELCOM");
+		LCD_Send_String("WELLCOM");
+//		LCD_Send_Command(0x0C);
+		
 }	
-// vao che do 4 bit cua LCD
-void LCD_Mode_4bit(unsigned char addr)
+void LCD_Mode_4bit(unsigned char bits)
 {
-		GPIOB->ODR &= ~(1U<<0);
-	
-		GPIOA->ODR = (GPIOA->ODR & 0x0F) | (addr & 0xF0);
+		GPIOA->ODR = (GPIOA->ODR & 0x0F) | (bits << 4);
 		LCD_Enable();
-		Delay_ms(5);
-
-		GPIOA->ODR = ((GPIOA->ODR & 0x0F) | (addr << 4));
-		LCD_Enable();
-		Delay_us(100);
 }
-// LCD enable
 void LCD_Enable(void)
 {
 		GPIOB->ODR |= (1<<1);
-		Delay_us(1);
+		Delay_ms(1);
 		GPIOB->ODR &= ~(1U<<1);
 		Delay_ms(2);
 }
-// gui cac lenh
 void LCD_Send_Command(unsigned char addr)
 {
 		GPIOB->ODR &= ~(1U<<0);
 	
-		GPIOA->ODR = (GPIOA->ODR & 0x0F) | (addr & 0xF0);
-		LCD_Enable();
-
-		GPIOA->ODR = ((GPIOA->ODR & 0x0F) | (addr << 4));
-		LCD_Enable();
-	
+		LCD_Mode_4bit(addr >> 4);
+		LCD_Mode_4bit(addr);
 }
-// hien thi 1 ki tu
 void LCD_Send_Data(unsigned char data)
 {
 		GPIOB->ODR |= (1U<<0);
 	
-		GPIOA->ODR = (GPIOA->ODR & 0x0F) | (data & 0xF0);
-		LCD_Enable();
-	
-		GPIOA->ODR = ((GPIOA->ODR & 0x0F) | (data << 4));
-		LCD_Enable();
+		LCD_Mode_4bit(data >> 4);
+		LCD_Mode_4bit(data);
 }
-// GPIO cho led LCD
 void GPIO_Init_Pin(void)
 {
 		RCC->APB2ENR |= 1<<3 | 1 << 2;
+		GPIOA->CRL &= ~(0xFFFF);
 		GPIOA->CRL |= 0x1111 << 16;
+		GPIOB->CRL &= ~(0xFF);
 		GPIOB->CRL |= 0x11;
 }
 
-
-void Led_Init(void)
-{
-		// GPIO C - pin pc13 - 50MHz
-		RCC->APB2ENR |= 1 << 4;
-		GPIOC->CRH |= 3 << 20;
-		// tat led
-		GPIOC->ODR |= 1 << 13;
-}
-// de lay
 void Delay_us(uint32_t us) {
     for (uint32_t i = 0; i < us * 8; i++) {
         __NOP(); // Assuming each __NOP() takes 125ns on a 64MHz clock
@@ -420,14 +402,19 @@ void Delay_ms(uint32_t ms) {
         Delay_us(1000);
     }
 }
-void LCD_Clear(void)
-{
-		LCD_Send_Command(0x01);
-}
-// hien thi 1 string
 void LCD_Send_String(char* str) {
    for (unsigned int i = 0; str[i] != 0; i++)
 	{
 			LCD_Send_Data(str[i]);
 	}
+}
+
+void Led_Init(void)
+{
+		// GPIO C - pin pc13 - 50MHz
+		RCC->APB2ENR |= 1 << 4;
+		GPIOC->CRH &= ~(0xF << 20);
+		GPIOC->CRH |= 3 << 20;
+		// tat led
+		GPIOC->ODR &= ~(1<<13);
 }

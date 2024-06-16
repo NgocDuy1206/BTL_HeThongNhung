@@ -32,6 +32,7 @@ float G = 9.81;									// gia toc trai dat
 volatile int16_t X, Y, Z;
 enum status{off, on};
 enum status system;
+int check = 0;
 
 // function câu hình chung
 void SysClkConf_72MHz(void);
@@ -100,6 +101,8 @@ void Run(void)
 		Delay_ms(1000);
 		LCD_Send_Command(0x01);
 		LCD_Send_String("Start");
+		GPIOC->ODR |= (1<<13);
+		
     while (1) {
 				if (system == on)
 				{		
@@ -110,10 +113,16 @@ void Run(void)
 								// hien thi va canh bao nga
 								LCD_Send_Command(0x01);
 								LCD_Send_String("FALL");
-								GPIOC->ODR &= ~(1<<13);		
+								check = 0;
+								while(check == 0){
+									GPIOC->ODR &= ~(1<<13);	
+										Delay_ms(100);
+									GPIOC->BSRR |= (1<<13);
+										Delay_ms(100);
+								}
 								system = off;
 						} else {
-								GPIOC->BSRR |= (1<<13);	
+									
 						}
 							
 				} else {
@@ -261,6 +270,7 @@ void Delay_Ms(uint8_t time)
 			SysTick->CTRL &= ~SysTick_CTRL_ENABLE;
 	}
 }
+
 // tinh do lon gia toc
 float Calculate_Magnitude(int16_t x, int16_t y, int16_t z)
 {		
@@ -321,6 +331,7 @@ void EXTI_Config(void) {
 void EXTI1_IRQHandler(void) {
     if(EXTI->PR & EXTI_PR_PR1) {
         EXTI->PR |= EXTI_PR_PR1;
+			check = 1;
 				if (system == on) {
 						system = off;
 						LCD_Send_Command(0x01);
